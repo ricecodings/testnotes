@@ -24,6 +24,7 @@ TABLE OF CONTENTS
 13) Quick Copy-Paste Snippets Pack
 
 ============================================================
+
 1) FAST WORKFLOW (WHAT TO DO IN ORDER)
 
 If you see a question like “Build full stack app with CRUD + Identity + Web API”, do this:
@@ -40,6 +41,7 @@ I) Scaffold API controller with actions using EF
 J) Test quickly in browser or Swagger (if enabled) or simple GET in address bar
 
 ============================================================
+
 2) FOLDER STRUCTURE (WHERE THINGS GO)
 
 Recommended lab-style structure:
@@ -66,6 +68,7 @@ Identity pages (after scaffolding) commonly appear under:
         Register.razor
 
 ============================================================
+
 3) ENTITY TEMPLATES (DOMAIN)
 
 3.1 Minimal Entity (properties only)
@@ -164,6 +167,7 @@ public void MarkComplete()
 
 
 ============================================================
+
 5) DBCONTEXT TEMPLATES (DATA)
 
 You usually get DbContext created automatically when you scaffold Razor Components CRUD.
@@ -212,6 +216,7 @@ builder.Services.AddDbContext<YourProjectContext>(options =>
 
 
 ============================================================
+
 6) MIGRATIONS AND DATABASE COMMANDS (PACKAGE MANAGER CONSOLE)
 
 Open:
@@ -301,6 +306,7 @@ Add-Migration SeedMyTask
 Update-Database
 
 ============================================================
+
 8) SCAFFOLD RAZOR COMPONENTS USING EF (CRUD) (VISUAL STUDIO STEPS)
 
 Goal: Generate Index/Create/Edit/Details/Delete pages for each entity
@@ -453,6 +459,7 @@ Common route:
 /api/mytasks
 
 ============================================================
+
 12) COMMON ERRORS AND FIXES (FAST)
 
 A) “Cannot resolve DbContext” during scaffolding
@@ -480,6 +487,7 @@ E) API 404
 Forgot builder.Services.AddControllers() or app.MapDefaultControllerRoute()
 
 ============================================================
+
 13) QUICK COPY-PASTE SNIPPETS PACK
 
 13.1 MyTask minimal entity
