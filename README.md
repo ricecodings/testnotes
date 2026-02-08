@@ -9,43 +9,43 @@
 
 ------------------------------------------------------------
 TABLE OF CONTENTS
-1) Fast Workflow (what to do in order)
-2) Folder Structure (where things go)
-3) Entity Templates (Domain)
-4) Adding Methods in Entities (business logic)
-5) DbContext Templates (Data)
-6) Migrations and Database Commands
-7) Seeding Templates (Configurations/Entities)
-8) Scaffold Razor Components using EF (CRUD) (Visual Studio steps)
-9) Identity Scaffold (Register/Login) (Visual Studio steps)
-10) Auth UI Patterns (NavMenu AuthorizeView, Authorize attribute)
-11) Web API Setup (Program.cs + scaffold controller)
-12) Common Errors and Fixes (fast)
-13) Quick Copy-Paste Snippets Pack
-
+1) Fast Workflow (what to do in order)  
+2) Folder Structure (where things go)  
+3) Entity Templates (Domain)  
+4) Adding Methods in Entities (business logic)  
+5) DbContext Templates (Data)  
+6) Migrations and Database Commands  
+7) Seeding Templates (Configurations/Entities)  
+8) Scaffold Razor Components using EF (CRUD) (Visual Studio steps)  
+9) Identity Scaffold (Register/Login) (Visual Studio steps)  
+10) Auth UI Patterns (NavMenu AuthorizeView, Authorize attribute)  
+11) Web API Setup (Program.cs + scaffold controller)  
+12) Common Errors and Fixes (fast)  
+13) Quick Copy-Paste Snippets Pack  
 ------------------------------------------------------------
 
-1) FAST WORKFLOW (WHAT TO DO IN ORDER)
+## 1) FAST WORKFLOW (WHAT TO DO IN ORDER)
 
 If you see a question like “Build full stack app with CRUD + Identity + Web API”, do this:
 
-A) Create Project (Blazor Web App)
-B) Scaffold Identity (Register/Login)
-C) Create Entity class in Domain
-D) Scaffold Razor Components CRUD for entity (creates/updates DbContext)
-E) Run migrations (Add-Migration, Update-Database)
-F) Add seeding configuration (IEntityTypeConfiguration + HasData)
-G) Apply seed in DbContext (OnModelCreating), migrate again
-H) Enable Web API controllers in Program.cs
-I) Scaffold API controller with actions using EF
-J) Test quickly in browser or Swagger (if enabled) or simple GET in address bar
+A) Create Project (Blazor Web App)  
+B) Scaffold Identity (Register/Login)  
+C) Create Entity class in Domain  
+D) Scaffold Razor Components CRUD for entity (creates/updates DbContext)  
+E) Run migrations (Add-Migration, Update-Database)  
+F) Add seeding configuration (IEntityTypeConfiguration + HasData)  
+G) Apply seed in DbContext (OnModelCreating), migrate again  
+H) Enable Web API controllers in Program.cs  
+I) Scaffold API controller with actions using EF  
+J) Test quickly in browser or Swagger (if enabled) or simple GET in address bar  
 
 ------------------------------------------------------------
 
-2) FOLDER STRUCTURE (WHERE THINGS GO)
+## 2) FOLDER STRUCTURE (WHERE THINGS GO)
 
 Recommended lab-style structure:
 
+```txt
 YourProject/
   Domain/
     MyTask.cs
@@ -59,21 +59,26 @@ YourProject/
     (scaffolded Razor components go here, usually <Entity>Pages folder)
   Controllers/
     MyTasksController.cs
+```
 
 Identity pages (after scaffolding) commonly appear under:
-  Components/
-    Account/
-      Pages/
-        Login.razor
-        Register.razor
+
+```txt
+Components/
+  Account/
+    Pages/
+      Login.razor
+      Register.razor
+```
 
 ------------------------------------------------------------
 
-3) ENTITY TEMPLATES (DOMAIN)
+## 3) ENTITY TEMPLATES (DOMAIN)
 
-3.1 Minimal Entity (properties only)
+### 3.1 Minimal Entity (properties only)
 Create: Domain/MyTask.cs
-"
+
+```csharp
 using System;
 
 namespace YourProjectName.Domain
@@ -88,10 +93,11 @@ namespace YourProjectName.Domain
         public string? CreatedBy { get; set; }
     }
 }
-"
+```
 
-3.2 Another common entity template (Name + Description + DateCreated)
-"
+### 3.2 Another common entity template (Name + Description + DateCreated)
+
+```csharp
 using System;
 
 namespace YourProjectName.Domain
@@ -104,11 +110,12 @@ namespace YourProjectName.Domain
         public DateTime DateCreated { get; set; }
     }
 }
-"
+```
 
-3.3 Entity with foreign key pattern (lab style)
+### 3.3 Entity with foreign key pattern (lab style)
 Example: Task belongs to Category
-"
+
+```csharp
 using System;
 
 namespace YourProjectName.Domain
@@ -123,58 +130,49 @@ namespace YourProjectName.Domain
         public Category? Category { get; set; }
     }
 }
-"
+```
+
 ------------------------------------------------------------
 
-4) ADDING METHODS IN ENTITIES (BUSINESS LOGIC)
+## 4) ADDING METHODS IN ENTITIES (BUSINESS LOGIC)
 
-4.1 HasExpired() example (no parameters, returns bool)
+### 4.1 HasExpired() example (no parameters, returns bool)
 
-using System;
-
-namespace YourProjectName.Domain
+```csharp
+public bool HasExpired()
 {
-    public class MyTask
-    {
-        public int Id { get; set; }
-        public string? TaskName { get; set; }
-        public bool IsCompleted { get; set; }
-        public DateTime DueDate { get; set; }
-        public DateTime CreatedDate { get; set; }
-        public string? CreatedBy { get; set; }
-        public bool HasExpired()
-        {
-            return DueDate.Date < DateTime.Now.Date;
-        }
-    }
+    return DueDate.Date < DateTime.Now.Date;
 }
+```
 
+### 4.2 Helper: DaysLeft() (returns int)
 
-4.2 Helper: DaysLeft() (returns int)
-
+```csharp
 public int DaysLeft()
 {
     return (DueDate.Date - DateTime.Now.Date).Days;
 }
+```
 
+### 4.3 Helper: MarkComplete() (sets bool)
 
-4.3 Helper: MarkComplete() (sets bool)
-
+```csharp
 public void MarkComplete()
 {
     IsCompleted = true;
 }
-
+```
 
 ------------------------------------------------------------
 
-5) DBCONTEXT TEMPLATES (DATA)
+## 5) DBCONTEXT TEMPLATES (DATA)
 
 You usually get DbContext created automatically when you scaffold Razor Components CRUD.
 If you need to add manually or check it, use:
 
 Create/Check: Data/YourProjectContext.cs
 
+```csharp
 using Microsoft.EntityFrameworkCore;
 using YourProjectName.Domain;
 
@@ -198,54 +196,65 @@ namespace YourProjectName.Data
         }
     }
 }
+```
 
+### 5.1 appsettings.json connection string (SQL Server typical)
 
-5.1 appsettings.json connection string (SQL Server typical)
-
+```json
 {
   "ConnectionStrings": {
     "YourProjectContext": "Server=(localdb)\\mssqllocaldb;Database=YourProjectContext;Trusted_Connection=True;MultipleActiveResultSets=true"
   }
 }
+```
 
+### 5.2 Program.cs register DbContext (lab pattern)
 
-5.2 Program.cs register DbContext (lab pattern)
-
+```csharp
 builder.Services.AddDbContext<YourProjectContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("YourProjectContext")));
-
+```
 
 ------------------------------------------------------------
 
-6) MIGRATIONS AND DATABASE COMMANDS (PACKAGE MANAGER CONSOLE)
+## 6) MIGRATIONS AND DATABASE COMMANDS (PACKAGE MANAGER CONSOLE)
 
 Open:
 Tools -> NuGet Package Manager -> Package Manager Console
 
-6.1 First migration
+### 6.1 First migration
+
+```txt
 Add-Migration Initial
 Update-Database
+```
 
-6.2 After you add seeding or change entity properties
+### 6.2 After you add seeding or change entity properties
+
+```txt
 Add-Migration SeedData
 Update-Database
+```
 
-6.3 If migration fails due to multiple DbContexts
+### 6.3 If migration fails due to multiple DbContexts
 
 Make sure you are selecting the correct Default Project in Package Manager Console
 
 If needed, specify context:
+
+```txt
 Add-Migration Initial -Context YourProjectContext
 Update-Database -Context YourProjectContext
+```
 
 ------------------------------------------------------------
 
-7) SEEDING TEMPLATES (CONFIGURATIONS/ENTITIES)
+## 7) SEEDING TEMPLATES (CONFIGURATIONS/ENTITIES)
 
-7.1 Seed class template (IEntityTypeConfiguration + HasData)
-
+### 7.1 Seed class template (IEntityTypeConfiguration + HasData)
 Create: Configurations/Entities/MyTaskSeed.cs
 
+```csharp
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using YourProjectName.Domain;
@@ -289,11 +298,12 @@ namespace YourProjectName.Configurations.Entities
         }
     }
 }
+```
 
-
-7.2 Apply seed in DbContext (OnModelCreating)
+### 7.2 Apply seed in DbContext (OnModelCreating)
 In Data/YourProjectContext.cs:
 
+```csharp
 using YourProjectName.Configurations.Entities;
 
 protected override void OnModelCreating(ModelBuilder builder)
@@ -301,47 +311,37 @@ protected override void OnModelCreating(ModelBuilder builder)
     base.OnModelCreating(builder);
     builder.ApplyConfiguration(new MyTaskSeed());
 }
-
+```
 
 Then run:
+
+```txt
 Add-Migration SeedMyTask
 Update-Database
+```
 
 ------------------------------------------------------------
 
-8) SCAFFOLD RAZOR COMPONENTS USING EF (CRUD) (VISUAL STUDIO STEPS)
+## 8) SCAFFOLD RAZOR COMPONENTS USING EF (CRUD) (VISUAL STUDIO STEPS)
 
 Goal: Generate Index/Create/Edit/Details/Delete pages for each entity
 
 Step-by-step (lab style):
-
-Right-click the Pages folder (or Components/Pages depending on your template)
-
-Add -> New Scaffolded Item…
-
-Select: Razor Component using Entity Framework (CRUD)
-
-Template: CRUD
-
-Model class: choose your entity (MyTask)
-
-Data context class:
-
-First time: click + to create a new DbContext, accept the generated name
-
-Next entities: reuse the SAME DbContext (do not create a new one)
-
-Database provider: SQL Server (if lab uses SQL Server)
-
-Click Add
+- Right-click the Pages folder (or Components/Pages depending on your template)
+- Add -> New Scaffolded Item…
+- Select: Razor Component using Entity Framework (CRUD)
+- Template: CRUD
+- Model class: choose your entity (MyTask)
+- Data context class:
+  - First time: click + to create a new DbContext, accept the generated name
+  - Next entities: reuse the SAME DbContext (do not create a new one)
+- Database provider: SQL Server (if lab uses SQL Server)
+- Click Add
 
 After scaffolding:
-
-You should see a new folder like: Components/Pages/MyTaskPages/ or Pages/MyTaskPages/
-
-It contains: Index.razor, Create.razor, Edit.razor, Details.razor, Delete.razor
-
-DbContext is updated with DbSet<MyTask>
+- You should see a new folder like: Components/Pages/MyTaskPages/ or Pages/MyTaskPages/
+- It contains: Index.razor, Create.razor, Edit.razor, Details.razor, Delete.razor
+- DbContext is updated with DbSet<MyTask)
 
 Repeat the same steps for ALL entities.
 
@@ -350,57 +350,45 @@ Repeat the same steps for ALL entities.
 <img width="736" height="952" alt="image" src="https://github.com/user-attachments/assets/016e56af-7491-41be-9d9f-36db7778f9e5" />
 <img width="732" height="952" alt="image" src="https://github.com/user-attachments/assets/d8ae5169-b86c-4bf7-881e-bba3eba7dbe4" />
 
-
 ------------------------------------------------------------
 
-9) IDENTITY SCAFFOLD (REGISTER/LOGIN) (VISUAL STUDIO STEPS)
+## 9) IDENTITY SCAFFOLD (REGISTER/LOGIN) (VISUAL STUDIO STEPS)
 
 Goal: Add user registration + login pages
 
 Step-by-step:
-
-Right-click Project
-
-Add -> New Scaffolded Item…
-
-Select: Identity
-
-Choose the pages you need:
-
-Account/Login
-
-Account/Register
-(Some labs scaffold all Identity pages. Follow your lab instruction.)
-
-Select or create Identity DbContext (IdentityContext / ApplicationDbContext)
-
-Click Add
+- Right-click Project
+- Add -> New Scaffolded Item…
+- Select: Identity
+- Choose the pages you need:
+  - Account/Login
+  - Account/Register
+  - (Some labs scaffold all Identity pages. Follow your lab instruction.)
+- Select or create Identity DbContext (IdentityContext / ApplicationDbContext)
+- Click Add
 
 After scaffolding you should see:
-Components/Account/Pages/Login.razor
-Components/Account/Pages/Register.razor
+- Components/Account/Pages/Login.razor
+- Components/Account/Pages/Register.razor
 
 Program.cs checklist:
 
+```csharp
 app.UseAuthentication();
-
 app.UseAuthorization();
+```
 
 Run and test:
-
-Register an account
-
-Login with the account
+- Register an account
+- Login with the account
 
 ------------------------------------------------------------
 
-10) AUTH UI PATTERNS (NAVMENU + AUTHORIZE ATTRIBUTE)
+## 10) AUTH UI PATTERNS (NAVMENU + AUTHORIZE ATTRIBUTE)
 
-10.1 NavMenu.razor pattern (AuthorizeView)
-Show Login/Register when not signed in, show Email/Logout when signed in.
+### 10.1 NavMenu.razor pattern (AuthorizeView)
 
-Pseudo-pattern:
-
+```razor
 <AuthorizeView>
   <Authorized>
     <!-- Show user name and logout -->
@@ -409,91 +397,81 @@ Pseudo-pattern:
     <!-- Show Register and Login -->
   </NotAuthorized>
 </AuthorizeView>
+```
 
+### 10.2 Secure a Razor page (role or authenticated users)
 
-10.2 Secure a Razor page (role or authenticated users)
-At top of page:
-
+```razor
 @using Microsoft.AspNetCore.Authorization
 @attribute [Authorize]
+```
 
+Role-based:
 
-Or role-based:
-
+```razor
 @attribute [Authorize(Roles = "Administrator")]
+```
+
 ------------------------------------------------------------
 
-11) WEB API SETUP (PROGRAM.CS + SCAFFOLD CONTROLLER)
+## 11) WEB API SETUP (PROGRAM.CS + SCAFFOLD CONTROLLER)
 
-11.1 Program.cs enable controllers
-Add:
+### 11.1 Program.cs enable controllers
 
+```csharp
 builder.Services.AddControllers();
-
+```
 
 And later before app.Run():
 
+```csharp
 app.MapDefaultControllerRoute();
+```
 
+### 11.2 Scaffold API Controller with actions using Entity Framework (VS steps)
 
-11.2 Scaffold API Controller with actions using Entity Framework (VS steps)
-
-Right-click Controllers folder
-
-Add -> Controller
-
-Choose API
-
-Select: API Controller with actions, using Entity Framework
-
-Model class: MyTask
-
-DbContext class: YourProjectContext (the same one that has DbSet<MyTask>)
-
-Add
+- Right-click Controllers folder
+- Add -> Controller
+- Choose API
+- Select: API Controller with actions, using Entity Framework
+- Model class: MyTask
+- DbContext class: YourProjectContext (the same one that has DbSet<MyTask>)
+- Add
 
 Result:
-
-A controller like MyTasksController.cs with GET, POST, PUT, DELETE
+- A controller like MyTasksController.cs with GET, POST, PUT, DELETE
 
 Common route:
-
-/api/mytasks
-
-------------------------------------------------------------
-
-12) COMMON ERRORS AND FIXES (FAST)
-
-A) “Cannot resolve DbContext” during scaffolding
-
-You created multiple DbContexts. Reuse the first one for all scaffolds.
-
-Check which context contains DbSet<MyTask>.
-
-B) “No such table AspNetUsers” or login fails
-
-You did not run Update-Database after Identity scaffolding.
-
-Run Add-Migration IdentityInit (or similar) then Update-Database.
-
-C) “HasData requires key values”
-
-Ensure every seeded entity has Id set (1,2,3 etc).
-
-D) Date comparisons wrong for “today”
-
-Use DueDate.Date < DateTime.Now.Date (strictly less than)
-
-E) API 404
-
-Forgot builder.Services.AddControllers() or app.MapDefaultControllerRoute()
+- /api/mytasks
 
 ------------------------------------------------------------
 
-13) QUICK COPY-PASTE SNIPPETS PACK
+## 12) COMMON ERRORS AND FIXES (FAST)
 
-13.1 MyTask minimal entity
+A) “Cannot resolve DbContext” during scaffolding  
+- You created multiple DbContexts. Reuse the first one for all scaffolds.
+- Check which context contains DbSet<MyTask>.
 
+B) “No such table AspNetUsers” or login fails  
+- You did not run Update-Database after Identity scaffolding.
+- Run Add-Migration IdentityInit (or similar) then Update-Database.
+
+C) “HasData requires key values”  
+- Ensure every seeded entity has Id set (1,2,3 etc).
+
+D) Date comparisons wrong for “today”  
+- Use DueDate.Date < DateTime.Now.Date (strictly less than)
+
+E) API 404  
+- Forgot builder.Services.AddControllers() or app.MapDefaultControllerRoute()
+
+------------------------------------------------------------
+
+## 13) QUICK COPY-PASTE SNIPPETS PACK
+
+### 13.1 MyTask minimal entity
+
+```csharp
 using System;
 
 namespace YourProjectName.Domain
@@ -508,10 +486,11 @@ namespace YourProjectName.Domain
         public string? CreatedBy { get; set; }
     }
 }
+```
 
+### 13.2 MyTask with HasExpired()
 
-13.2 MyTask with HasExpired()
-
+```csharp
 using System;
 
 namespace YourProjectName.Domain
@@ -531,10 +510,11 @@ namespace YourProjectName.Domain
         }
     }
 }
+```
 
+### 13.3 MyTaskSeed
 
-13.3 MyTaskSeed
-
+```csharp
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using YourProjectName.Domain;
@@ -578,10 +558,11 @@ namespace YourProjectName.Configurations.Entities
         }
     }
 }
+```
 
+### 13.4 ApplyConfiguration in DbContext
 
-13.4 ApplyConfiguration in DbContext
-
+```csharp
 using YourProjectName.Configurations.Entities;
 
 protected override void OnModelCreating(ModelBuilder builder)
@@ -589,20 +570,22 @@ protected override void OnModelCreating(ModelBuilder builder)
     base.OnModelCreating(builder);
     builder.ApplyConfiguration(new MyTaskSeed());
 }
+```
 
+### 13.5 PMC Commands
 
-13.5 PMC Commands
-
+```txt
 Add-Migration Initial
 Update-Database
 Add-Migration SeedMyTask
 Update-Database
+```
 
+### 13.6 Enable controllers (Program.cs)
 
-13.6 Enable controllers (Program.cs)
-
+```csharp
 builder.Services.AddControllers();
 app.MapDefaultControllerRoute();
-
+```
 
 END OF README
