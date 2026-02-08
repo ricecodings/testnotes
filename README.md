@@ -23,7 +23,7 @@ TABLE OF CONTENTS
 12) Common Errors and Fixes (fast)
 13) Quick Copy-Paste Snippets Pack
 
-============================================================
+------------------------------------------------------------
 
 1) FAST WORKFLOW (WHAT TO DO IN ORDER)
 
@@ -40,7 +40,7 @@ H) Enable Web API controllers in Program.cs
 I) Scaffold API controller with actions using EF
 J) Test quickly in browser or Swagger (if enabled) or simple GET in address bar
 
-============================================================
+------------------------------------------------------------
 
 2) FOLDER STRUCTURE (WHERE THINGS GO)
 
@@ -67,7 +67,7 @@ Identity pages (after scaffolding) commonly appear under:
         Login.razor
         Register.razor
 
-============================================================
+------------------------------------------------------------
 
 3) ENTITY TEMPLATES (DOMAIN)
 
@@ -124,7 +124,7 @@ namespace YourProjectName.Domain
     }
 }
 "
-============================================================
+------------------------------------------------------------
 
 4) ADDING METHODS IN ENTITIES (BUSINESS LOGIC)
 
@@ -166,7 +166,7 @@ public void MarkComplete()
 }
 
 
-============================================================
+------------------------------------------------------------
 
 5) DBCONTEXT TEMPLATES (DATA)
 
@@ -215,7 +215,7 @@ builder.Services.AddDbContext<YourProjectContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("YourProjectContext")));
 
 
-============================================================
+------------------------------------------------------------
 
 6) MIGRATIONS AND DATABASE COMMANDS (PACKAGE MANAGER CONSOLE)
 
@@ -237,7 +237,9 @@ Make sure you are selecting the correct Default Project in Package Manager Conso
 If needed, specify context:
 Add-Migration Initial -Context YourProjectContext
 Update-Database -Context YourProjectContext
-============================================================
+
+------------------------------------------------------------
+
 7) SEEDING TEMPLATES (CONFIGURATIONS/ENTITIES)
 
 7.1 Seed class template (IEntityTypeConfiguration + HasData)
@@ -305,7 +307,7 @@ Then run:
 Add-Migration SeedMyTask
 Update-Database
 
-============================================================
+------------------------------------------------------------
 
 8) SCAFFOLD RAZOR COMPONENTS USING EF (CRUD) (VISUAL STUDIO STEPS)
 
@@ -349,7 +351,7 @@ Repeat the same steps for ALL entities.
 <img width="732" height="952" alt="image" src="https://github.com/user-attachments/assets/d8ae5169-b86c-4bf7-881e-bba3eba7dbe4" />
 
 
-============================================================
+------------------------------------------------------------
 
 9) IDENTITY SCAFFOLD (REGISTER/LOGIN) (VISUAL STUDIO STEPS)
 
@@ -390,7 +392,7 @@ Register an account
 
 Login with the account
 
-============================================================
+------------------------------------------------------------
 
 10) AUTH UI PATTERNS (NAVMENU + AUTHORIZE ATTRIBUTE)
 
@@ -419,7 +421,7 @@ At top of page:
 Or role-based:
 
 @attribute [Authorize(Roles = "Administrator")]
-============================================================
+------------------------------------------------------------
 
 11) WEB API SETUP (PROGRAM.CS + SCAFFOLD CONTROLLER)
 
@@ -458,7 +460,7 @@ Common route:
 
 /api/mytasks
 
-============================================================
+------------------------------------------------------------
 
 12) COMMON ERRORS AND FIXES (FAST)
 
@@ -486,7 +488,7 @@ E) API 404
 
 Forgot builder.Services.AddControllers() or app.MapDefaultControllerRoute()
 
-============================================================
+------------------------------------------------------------
 
 13) QUICK COPY-PASTE SNIPPETS PACK
 
